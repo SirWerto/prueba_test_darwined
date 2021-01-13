@@ -13,7 +13,7 @@ def try_to_read(Path):
         return File
 
 
-if __main__ == "__main__":
+def main():
     if len(sys.argv) != 3:
         exit("not enoght arguments")
 
@@ -24,5 +24,8 @@ if __main__ == "__main__":
     print(Asignatura)
 
     #Try to load all files
+
+if __main__ == "__main__":
+    main()
 
     
