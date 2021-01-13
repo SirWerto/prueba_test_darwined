@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-#from asignatura import validacion_asignatura
+from test_asignatura import validacion_asignatura
 
 
 def try_to_read(Path):
@@ -8,24 +8,21 @@ def try_to_read(Path):
         File = pd.read_excel(Path, engine="openpyxl")
     except:
         print("No se ha podido cargar el fichero " + str(Path))
+        return None
     else:
         print(str(Path) + " fichero cargado correctamente")
         return File
 
 
-def main():
-    if len(sys.argv) != 3:
-        exit("not enoght arguments")
+def main(catalogos, booltest=None):
 
-    Files = sys.argv[1]
-    BoolTest = sys.argv[2]
+    reportlist = []
 
-    Asignatura = try_to_read(Files["asignatura"])
-    print(Asignatura)
+    Cat = {key:try_to_read(value) for key, value in catalogos.items()}
+    reportlist += validacion_asignatura(Cat["asignatura"], Cat["tsalas"], Cat["franjas"])
+    pd.DataFrame(reportlist, columns=["Catálogo", "Clave", "Columnas afectadas", "Tipo de alerta", "Msg1", "Msg2"]).to_excel("Reporte.xlsx")
 
     #Try to load all files
 
-if __name__ == "__main__":
-    main()
 
     
