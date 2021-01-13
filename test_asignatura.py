@@ -36,7 +36,7 @@ def propiedad_online_numerospermitidos(row):
 ### Private Functions ###
 ############################
 
-def crear_clave(row):
+def crear_clave(x):
     Clave = str(x["SEDE"])+str(x["ESCUELA"])+str(x["MODALIDAD"])+str(x["JORNADA"])+str(x["CARRERA"])+str(x["CURRICULO"])+str(x["ASIGNATURA"])+str(x["COMPONENTE"])
     return Clave
 
