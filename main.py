@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+#from asignatura import validacion_asignatura
 
 
 def try_to_read(Path):
@@ -18,6 +19,9 @@ if __main__ == "__main__":
 
     Files = sys.argv[1]
     BoolTest = sys.argv[2]
+
+    Asignatura = try_to_read(Files["asignatura"])
+    print(Asignatura)
 
     #Try to load all files
 
