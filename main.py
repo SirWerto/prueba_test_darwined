@@ -25,7 +25,7 @@ def main():
 
     #Try to load all files
 
-if __main__ == "__main__":
+if __name__ == "__main__":
     main()
 
     
