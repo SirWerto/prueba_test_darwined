@@ -20,7 +20,7 @@ def main(catalogos, booltest=None):
 
     Cat = {key:try_to_read(value) for key, value in catalogos.items()}
     reportlist += validacion_asignatura(Cat["asignatura"], Cat["tsalas"], Cat["franjas"])
-    pd.DataFrame(reportlist, columns=["Catalogo", "Clave", "Columnas afectadas", "Tipo de alerta", "Msg1", "Msg2"]).sort_values(by=["Catalogo", "Clave"], axis=1).to_excel("Reporte/Reporte.xlsx")
+    pd.DataFrame(reportlist, columns=["Catalogo", "Clave", "Columnas afectadas", "Tipo de alerta", "Msg1", "Msg2"]).to_excel("Reporte/Reporte.xlsx")
 
     #Try to load all files
 
