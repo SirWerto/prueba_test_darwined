@@ -95,9 +95,11 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     if Franjas != None:
         print("hola")
 
-    clavesconerror = [clave for fichero, clave, column, tipo, msg1, msg2 in report]
-    Asignaturas.loc[:, "Error"] = 0
-    Asignaturas.loc[Asignaturas["ClaveReporte"].isin(clavesconerror), "Error"] = 1
+    clavesconerror = [(clave, tipo) for fichero, clave, column, tipo, msg1, msg2 in report]
+    ce = pd.DataFrame(clavesconerror, columns=["ClaveReporte", "Error"])
+    Asignaturas = Asignaturas.merge(ce, how="left", on="ClaveReporte")
+    #Asignaturas.loc[:, "Error"] = 0
+    #Asignaturas.loc[Asignaturas["ClaveReporte"].isin(clavesconerror), "Error"] = 1
 
     cols = Asignaturas.columns.values.tolist()
     NewCols = ["ClaveReporte", "Error"] + cols[:-2]
