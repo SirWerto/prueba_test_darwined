@@ -70,7 +70,7 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     Asignaturas.to_excel("RAsignaturas.xlsx", index=False)
     cols = Asignaturas.columns.tolist()
     newcols = cols[-2:] + cols[:-2]
-    Asignaturas.columns = newcols
+    Asignaturas.reindex(columns = newcols)
 
     return report
 
