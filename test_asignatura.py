@@ -54,6 +54,50 @@ def propiedad_num_sesiones_cero_sesiones(row):
     else:
         return None
 
+def propiedad_req_horario_numerospermitidos(row):
+    if row["REQ HORARIO"] not in [0,1]:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "REQ HORARIO", "error", "Valor no permitido", "Valores permitidos [0, 1]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_req_horario_false(row):
+    if row["REQ HORARIO"] == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "REQ HORARIO", "info", "Esta asignatura no requiere horario", "")
+        return Tupla
+    else:
+        return None
+
+def propiedad_req_sala_numerospermitidos(row):
+    if row["REQ SALA"] not in [0,1]:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "REQ SALA", "error", "Valor no permitido", "Valores permitidos [0, 1]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_req_sala_false(row):
+    if row["REQ SALA"] == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "REQ SALA", "info", "Esta asignatura no requiere sala", "")
+        return Tupla
+    else:
+        return None
+
+def propiedad_req_docente_numerospermitidos(row):
+    if row["REQ DOCENTE"] not in [0,1]:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "REQ DOCENTE", "error", "Valor no permitido", "Valores permitidos [0, 1]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_req_docente_false(row):
+    if row["REQ DOCENTE"] == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "REQ DOCENTE", "info", "Esta asignatura no requiere docente", "")
+        return Tupla
+    else:
+        return None
+
+
+
 
 ######################
 ### Test Functions ###
@@ -78,11 +122,22 @@ def apply_row(df, func, columns, **kargs):
 ############################
 
 
-def validacion_asignatura(Asignaturas, TSalas, Franjas):
+def validacion_asignatura(Asignaturas, TSalas, Franjas, path="Reporte/", to_csv=False):
 
     Asignaturas["ClaveReporte"] = Asignaturas.apply(crear_clave, axis=1)
 
     report = []
+
+
+    #Obligatorias
+    report += apply_row(Asignaturas, propiedad_req_horario_numerospermitidos, ["REQ HORARIO"])
+    report += apply_row(Asignaturas, propiedad_req_horario_false, ["REQ HORARIO"])
+    report += apply_row(Asignaturas, propiedad_req_sala_numerospermitidos, ["REQ SALA"])
+    report += apply_row(Asignaturas, propiedad_req_sala_false, ["REQ SALA"])
+    report += apply_row(Asignaturas, propiedad_req_docente_numerospermitidos, ["REQ DOCENTE"])
+    report += apply_row(Asignaturas, propiedad_req_docente_false, ["REQ DOCENTE"])
+    #Opcionales
+    #Dependientes
 
     report += apply_row(Asignaturas, propiedad_online_numerospermitidos, ["ONLINE"])
     report += apply_row(Asignaturas, propiedad_usable_numerospermitidos, ["USABLE"])
@@ -90,22 +145,23 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     report += apply_row(Asignaturas, propiedad_num_bloques_cero_bloques, ["NUM BLOQUES"])
     report += apply_row(Asignaturas, propiedad_num_sesiones_cero_sesiones, ["NUM SESIONES"])
 
-    if TSalas != None:
-        print("hola")
-    if Franjas != None:
-        print("hola")
 
-    clavesconerror = [(clave, tipo) for fichero, clave, column, tipo, msg1, msg2 in report]
-    ce = pd.DataFrame(clavesconerror, columns=["ClaveReporte", "Error"])
-    Asignaturas = Asignaturas.merge(ce, how="left", on="ClaveReporte")
-    #Asignaturas.loc[:, "Error"] = 0
-    #Asignaturas.loc[Asignaturas["ClaveReporte"].isin(clavesconerror), "Error"] = 1
-
-    cols = Asignaturas.columns.values.tolist()
-    NewCols = ["ClaveReporte", "Error"] + cols[:-2]
-
-    Asignaturas[NewCols].to_excel("Reporte/RAsignaturas.xlsx", index=False)
-
-    return report
+    if len(report) != 0:
+        print("Se han encontrado " + str(len(report)) + " alertas en el catalogo de asignaturas")
+        clavesconerror = [(clave, tipo) for fichero, clave, column, tipo, msg1, msg2 in report]
+        ce = pd.DataFrame(clavesconerror, columns=["ClaveReporte", "Error"])
+        Asignaturas = Asignaturas.merge(ce, how="left", on="ClaveReporte")
+        
+        cols = Asignaturas.columns.values.tolist()
+        NewCols = ["ClaveReporte", "Error"] + cols[:-2]
+        
+        if to_csv:
+            Asignaturas[NewCols].to_csv(path+"RAsignaturas.csv", index=False)
+            return report
+        else:
+            Asignaturas[NewCols].to_excel(path+"RAsignaturas.xlsx", index=False)
+            return report
+    else:
+        return []
 
     
