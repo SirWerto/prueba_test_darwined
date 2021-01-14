@@ -1,0 +1,6 @@
+*~
+testing/*
+*.ipynb*
+__pycache__/*
+*.xlsx
+*.csv
