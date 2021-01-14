@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+import time
 from test_asignatura import validacion_asignatura
 
 
@@ -14,13 +15,29 @@ def try_to_read(Path):
         return File
 
 
-def main(catalogos, booltest=None):
+def main(catalogos, path="Reporte/", to_csv=False):
 
+    start = time.time()
     reportlist = []
 
+    print("================ CARGA =====================")
     Cat = {key:try_to_read(value) for key, value in catalogos.items()}
-    reportlist += validacion_asignatura(Cat["asignatura"], Cat["tsalas"], Cat["franjas"])
-    pd.DataFrame(reportlist, columns=["Catalogo", "Clave", "Columnas afectadas", "Tipo de alerta", "Msg1", "Msg2"]).to_excel("Reporte/Reporte.xlsx")
+
+    print("================ EVALUACIÓN ================")
+    reportlist += validacion_asignatura(Cat["asignatura"], Cat["tsalas"], Cat["franjas"], path=path, to_csv=to_csv)
+
+    
+    end = time.time()
+    print("================ RESUMEN ===================")
+    print("La evaluación ha durado " + str(round(end-start, 2)) + " segundos")
+    if len(reportlist) == 0:
+        print("TODOS LOS CATÁLOGOS PASADOS SON CORRECTOS")
+    else:
+        print("SE HAN ENCONTRADO UN TOTAL DE " + str(len(reportlist)) + " ALERTAS")
+        if to_csv:
+            pd.DataFrame(reportlist, columns=["Catalogo", "Clave", "Columnas afectadas", "Tipo de alerta", "Msg1", "Msg2"]).to_csv(path+"Reporte.csv")
+        else:
+            pd.DataFrame(reportlist, columns=["Catalogo", "Clave", "Columnas afectadas", "Tipo de alerta", "Msg1", "Msg2"]).to_excel(path+"Reporte.xlsx")
 
     #Try to load all files
 
