@@ -53,7 +53,6 @@ def apply_row(df, func, columns, **kargs):
 def validacion_asignatura(Asignaturas, TSalas, Franjas):
 
     Asignaturas["ClaveReporte"] = Asignaturas.apply(crear_clave, axis=1)
-    Asignaturas.loc[:,"Aviso"] = ""
 
     report = []
 
@@ -64,13 +63,14 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     if Franjas != None:
         print("hola")
 
-    cols = Asignaturas.columns.values.tolist()
-    NewCols = ["ClaveReporte", "Error"] + cols[:-2]
     clavesconerror = [clave for fichero, clave, column, tipo, msg1, msg2 in report]
-    pd.DataFrame(clavesconerror).to_excel("debug.txt")
     Asignaturas.loc[:, "Error"] = 0
     Asignaturas.loc[Asignaturas["ClaveReporte"].isin(clavesconerror), "Error"] = 1
-    Asignaturas[[NewCols]].to_excel("RAsignaturas.xlsx", index=False)
+
+    cols = Asignaturas.columns.values.tolist()
+    NewCols = ["ClaveReporte", "Error"] + cols[:-2]
+
+    Asignaturas[NewCols].to_excel("RAsignaturas.xlsx", index=False)
 
     return report
 
