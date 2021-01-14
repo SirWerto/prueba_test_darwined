@@ -67,7 +67,7 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     cols = Asignaturas.columns.values.tolist()
     NewCols = ["ClaveReporte", "Error"] + cols[:-2]
     clavesconerror = [clave for fichero, clave, column, tipo, msg1, msg2 in report]
-    print(clavesconerror)
+    pd.DataFrame(clavesconerror).to_excel("debug.txt")
     Asignaturas.loc[:, "Error"] = 0
     Asignaturas.loc[Asignaturas["ClaveReporte"].isin(clavesconerror), "Error"] = 1
     Asignaturas[[NewCols]].to_excel("RAsignaturas.xlsx", index=False)
