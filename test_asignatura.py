@@ -68,7 +68,7 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     Asignaturas.loc[:, "Error"] = 0
     Asignaturas.loc[Asignaturas["ClaveReporte"].isin(clavesconerror), "Error"] = 1
     Asignaturas.to_excel("RAsignaturas.xlsx", index=False)
-    cols = Asignaturas.columns
+    cols = Asignaturas.columns.tolist()
     newcols = cols[-2:] + cols[:-2]
     Asignaturas.columns = newcols
 
