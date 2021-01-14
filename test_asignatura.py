@@ -96,6 +96,45 @@ def propiedad_req_docente_false(row):
     else:
         return None
 
+def propiedad_PrioridadDeAula_NumerosPermitidos(row, tiposdesalas, allow_list):
+    if row[tiposdesalas].sum() not in allow_list:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "Prioridades de sala", "error", "Números no permitidos", "Tienen que ser números consecutivos [1,2,3...]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_PrioridadDeAula_NumerosNoConsecutivos(row, tiposdesalas):   
+    Setrow = set(row[tiposdesalas].values)
+    LS = len(Setrow)
+    Set = set(range(LS))
+    if Setrow.difference(Set) != set():
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "Prioridades de sala", "error", "Prioridades no consecutivas", "Tienen que ser números consecutivos [1,2,3...]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_PrioridadDeAula_CeroPrioridades(row, tiposdesalas):
+    if row[tiposdesalas].sum() == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "Prioridades de sala", "aviso", "No se ha definido ninguna prioridad", "https://github.com/SirWerto/prueba_test_darwined/blob/master/docs/ceroprioridades.md")
+        return Tupla
+    else:
+        return None
+
+def propiedad_Franjas_NumerosPermitidos(row, franjas):
+    Setrow = set(row[franjas].values)
+    if Setrow.difference(set([0,1])) != set():
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "Franjas", "error", "Números no permitidos", "Valores permitidos [0, 1]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_Franjas_CeroFranjas(row, franjas):
+    if row[franjas].sum() == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "Franjas", "aviso", "No se ha definido ninguna franja", "https://github.com/SirWerto/prueba_test_darwined/blob/master/docs/cerofranjas.md")
+        return Tupla
+    else:
+        return None
+
 
 
 
@@ -113,8 +152,9 @@ def crear_clave(x):
     return Clave
 
 def apply_row(df, func, columns, **kargs):
-    columns.append("ClaveReporte")
-    tofix = df[columns].apply(func, axis=1, **kargs).dropna().values.tolist()
+    owncolumns = columns.copy()
+    owncolumns.append("ClaveReporte")
+    tofix = df[owncolumns].apply(func, axis=1, **kargs).dropna().values.tolist()
     return tofix
 
 ############################    
@@ -130,22 +170,37 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas, path="Reporte/", to_csv=
 
 
     #Obligatorias
+    report += apply_row(Asignaturas, propiedad_num_bloques_cero_bloques, ["NUM BLOQUES"])
+    report += apply_row(Asignaturas, propiedad_num_sesiones_cero_sesiones, ["NUM SESIONES"])
     report += apply_row(Asignaturas, propiedad_req_horario_numerospermitidos, ["REQ HORARIO"])
     report += apply_row(Asignaturas, propiedad_req_horario_false, ["REQ HORARIO"])
     report += apply_row(Asignaturas, propiedad_req_sala_numerospermitidos, ["REQ SALA"])
     report += apply_row(Asignaturas, propiedad_req_sala_false, ["REQ SALA"])
     report += apply_row(Asignaturas, propiedad_req_docente_numerospermitidos, ["REQ DOCENTE"])
     report += apply_row(Asignaturas, propiedad_req_docente_false, ["REQ DOCENTE"])
-    #Opcionales
-    #Dependientes
-
     report += apply_row(Asignaturas, propiedad_online_numerospermitidos, ["ONLINE"])
     report += apply_row(Asignaturas, propiedad_usable_numerospermitidos, ["USABLE"])
     report += apply_row(Asignaturas, propiedad_usable_info_cero, ["USABLE"])
-    report += apply_row(Asignaturas, propiedad_num_bloques_cero_bloques, ["NUM BLOQUES"])
-    report += apply_row(Asignaturas, propiedad_num_sesiones_cero_sesiones, ["NUM SESIONES"])
+    #Opcionales
+    #Dependientes
+
+    if isinstance(TSalas, pd.DataFrame):
+        TSalaslist = TSalas["CODIGO"].values.tolist()
+        LenSalas = len(TSalaslist)
+        Columns = TSalaslist.copy()
+        report += apply_row(Asignaturas, propiedad_PrioridadDeAula_NumerosPermitidos, Columns, tiposdesalas=TSalaslist, allow_list=list(gen_val_prio(LenSalas)))
+        report += apply_row(Asignaturas, propiedad_PrioridadDeAula_NumerosNoConsecutivos, Columns, tiposdesalas=TSalaslist)
+        report += apply_row(Asignaturas, propiedad_PrioridadDeAula_CeroPrioridades, Columns, tiposdesalas=TSalaslist)
+
+    if isinstance(Franjas, dict):
+        TFranjas = list(Franjas.keys())
+        Columns = TFranjas.copy()
+        report += apply_row(Asignaturas, propiedad_Franjas_NumerosPermitidos , Columns, franjas=TFranjas)
+        report += apply_row(Asignaturas, propiedad_Franjas_CeroFranjas, Columns, franjas=TFranjas)
 
 
+
+    #SAVE AND REPORT
     if len(report) != 0:
         print("Se han encontrado " + str(len(report)) + " alertas en el catalogo de asignaturas")
         clavesconerror = [(clave, tipo) for fichero, clave, column, tipo, msg1, msg2 in report]
