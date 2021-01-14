@@ -26,6 +26,20 @@ def propiedad_online_numerospermitidos(row):
     else:
         return None
 
+def propiedad_usable_numerospermitidos(row):
+    if row["USABLE"] not in [0,1]:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "USABLE", "error", "Valor no permitido", "Valores permitidos [0, 1]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_usable_info_cero(row):
+    if row["USABLE"] == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "USABLE", "info", "Esta asignatura esta deshabilitada", "")
+        return Tupla
+    else:
+        return None
+
 def propiedad_num_bloques_cero_bloques(row):
     if row["NUM BLOQUES"] == 0:
         Tupla = ("asignaturas", str(row["ClaveReporte"]), "NUM BLOQUES", "aviso", "Se imparten 0 bloques de la asignatura", "https://github.com/SirWerto/prueba_test_darwined/blob/master/docs/cerosesiones.md")
@@ -71,6 +85,8 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     report = []
 
     report += apply_row(Asignaturas, propiedad_online_numerospermitidos, ["ONLINE"])
+    report += apply_row(Asignaturas, propiedad_usable_numerospermitidos, ["USABLE"])
+    report += apply_row(Asignaturas, propiedad_usable_info_cero, ["USABLE"])
     report += apply_row(Asignaturas, propiedad_num_bloques_cero_bloques, ["NUM BLOQUES"])
     report += apply_row(Asignaturas, propiedad_num_sesiones_cero_sesiones, ["NUM SESIONES"])
 
