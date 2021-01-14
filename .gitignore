@@ -4,3 +4,4 @@ testing/*
 __pycache__/*
 *.xlsx
 *.csv
+Reporte/*
