@@ -26,6 +26,13 @@ def propiedad_online_numerospermitidos(row):
     else:
         return None
 
+def propiedad_num_bloques_cero_bloques(row):
+    if row["NUM BLOQUES"] == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "NUM BLOQUES", "aviso", "Se imparten 0 bloques de la asignatura", "https://github.com/SirWerto/prueba_test_darwined/blob/master/docs/cerosesiones.md")
+        return Tupla
+    else:
+        return None
+
 def propiedad_num_sesiones_cero_sesiones(row):
     if row["NUM SESIONES"] == 0:
         Tupla = ("asignaturas", str(row["ClaveReporte"]), "NUM SESIONES", "aviso", "Se imparten 0 sesiones de la asignatura", "https://github.com/SirWerto/prueba_test_darwined/blob/master/docs/cerosesiones.md")
@@ -64,6 +71,7 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas):
     report = []
 
     report += apply_row(Asignaturas, propiedad_online_numerospermitidos, ["ONLINE"])
+    report += apply_row(Asignaturas, propiedad_num_bloques_cero_bloques, ["NUM BLOQUES"])
     report += apply_row(Asignaturas, propiedad_num_sesiones_cero_sesiones, ["NUM SESIONES"])
 
     if TSalas != None:
