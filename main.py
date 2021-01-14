@@ -4,9 +4,12 @@ import time
 from test_asignatura import validacion_asignatura
 
 
-def try_to_read(Path):
+def try_to_read(key, Path):
     try:
-        File = pd.read_excel(Path, engine="openpyxl")
+        if key == "franjas":
+            File = pd.read_excel(Path, sheet_name=None)
+        else:
+            File = pd.read_excel(Path, engine="openpyxl")
     except:
         print("No se ha podido cargar el fichero " + str(Path))
         return None
@@ -21,7 +24,7 @@ def main(catalogos, path="Reporte/", to_csv=False):
     reportlist = []
 
     print("================ CARGA =====================")
-    Cat = {key:try_to_read(value) for key, value in catalogos.items()}
+    Cat = {key:try_to_read(key, value) for key, value in catalogos.items()}
 
     print("================ EVALUACIÓN ================")
     reportlist += validacion_asignatura(Cat["asignatura"], Cat["tsalas"], Cat["franjas"], path=path, to_csv=to_csv)
