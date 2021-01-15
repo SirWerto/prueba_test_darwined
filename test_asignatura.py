@@ -26,6 +26,13 @@ def propiedad_online_numerospermitidos(row):
     else:
         return None
 
+def propiedad_online_InfoUno(row):
+    if row["ONLINE"] == 1:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "ONLINE", "info", "Esta asignatura se imparte online", "")
+        return Tupla
+    else:
+        return None
+
 def propiedad_usable_numerospermitidos(row):
     if row["USABLE"] not in [0,1]:
         Tupla = ("asignaturas", str(row["ClaveReporte"]), "USABLE", "error", "Valor no permitido", "Valores permitidos [0, 1]")
@@ -135,6 +142,85 @@ def propiedad_Franjas_CeroFranjas(row, franjas):
     else:
         return None
 
+def propiedad_SesionesAlineadas_NumerosPermitidos(row):
+    if row["SESIONES ALINEADAS"] not in [0,1]:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "SESIONES ALINEADAS", "error", "Números no permitidos", "Valores permitidos [0, 1]")
+        return Tupla
+    else:
+        return None
+
+def propiedad_SesionesAlineadas_InfoUno(row):
+    if row["SESIONES ALINEADAS"] == 1:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "SESIONES ALINEADAS", "info", "Esta asignatura se imparte alineada", "")
+        return Tupla
+    else:
+        return None
+
+def propiedad_Not_NaN(row):
+    if row.notna().all() != True:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "TODAS", "error", "Hay celdas vacias", "")
+        return Tupla
+    else:
+        return None
+
+def propiedad_VacantesMax_NumerosPermitidos(row):
+    if not isinstance(row['VAC MAX'], (int, float)) or row['VAC MAX'] < 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC MAX", "error", "Números no permitidos", "Los valores permitidos son enteros mayores que 0")
+        return Tupla
+    else:
+        return None
+
+def propiedad_VacantesMax_MaxCero(row):
+    if row['VAC MAX'] == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC MAX", "aviso", "No hay vacantes para esta asignatura", "https://github.com/SirWerto/prueba_test_darwined/blob/master/docs/cerovac.md")
+        return Tupla
+    else:
+        return None
+
+def propiedad_VacantesMin_NumerosPermitidos(row):
+    if not isinstance(row['VAC MIN'], (int, float)) or row['VAC MIN'] < 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC MIN", "error", "Números no permitidos", "Los valores permitidos son enteros mayores que 0")
+        return Tupla
+    else:
+        return None
+
+def propiedad_VacantesOpt_NumerosPermitidos(row):
+    if not isinstance(row['VAC OPT'], (int, float)) or row['VAC OPT'] < 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC OPT", "error", "Números no permitidos", "Los valores permitidos son enteros mayores que 0")
+        return Tupla
+    else:
+        return None
+
+def propiedad_VacantesOpt_MaxCero(row):
+    if row['VAC OPT'] == 0:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC OPT", "aviso", "Las vacantes óptimas para esta asignatura son de 0", "https://github.com/SirWerto/prueba_test_darwined/blob/master/docs/cerovac.md")
+        return Tupla
+    else:
+        return None
+
+def propiedad_Vacantes_MaxOpt(row):
+    if row['VAC OPT'] > row['VAC MAX']:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC OPT and MAX", "error", "Las vacantes óptimas son mayores que las máximas", "opt < max")
+        return Tupla
+    else:
+        return None
+
+def propiedad_Vacantes_MaxMin(row):
+    if row['VAC MIN'] > row['VAC MAX']:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC MIN and MAX", "error", "Las vacantes mínimas son mayores que las máximas", "min < max")
+        return Tupla
+    else:
+        return None
+
+def propiedad_Vacantes_OptMin(row):
+    if row['VAC MIN'] > row['VAC OPT']:
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "VAC MIN and OPT", "error", "Las vacantes mínimas son mayores que las óptimas", "min < opt")
+        return Tupla
+    else:
+        return None
+
+
+
 
 
 
@@ -154,8 +240,11 @@ def crear_clave(x):
 def apply_row(df, func, columns, **kargs):
     owncolumns = columns.copy()
     owncolumns.append("ClaveReporte")
-    tofix = df[owncolumns].apply(func, axis=1, **kargs).dropna().values.tolist()
-    return tofix
+    try:
+        tofix = df[owncolumns].apply(func, axis=1, **kargs).dropna().values.tolist()
+        return tofix
+    except:
+        return []
 
 ############################    
 ### Catalogue Validation ###
@@ -165,13 +254,20 @@ def apply_row(df, func, columns, **kargs):
 def validacion_asignatura(Asignaturas, TSalas, Franjas, path="Reporte/", to_csv=False):
 
     Asignaturas["ClaveReporte"] = Asignaturas.apply(crear_clave, axis=1)
+    allcolumns = Asignaturas.columns.tolist()[:-1].copy()
 
+    columnsmust = ['SEDE', 'ESCUELA', 'MODALIDAD', 'JORNADA', 'CARRERA', 'CURRICULO', 'ASIGNATURA', 'NOMBRE', 'COMPONENTE' \
+                   , 'TIPO', 'NUM BLOQUES', 'NUM SESIONES', 'VAC MAX', 'REQ HORARIO', 'REQ SALA', 'REQ DOCENTE', 'ONLINE' \
+                   , 'SESIONES ALINEADAS', 'USABLE']
     report = []
 
 
     #Obligatorias
+    report += apply_row(Asignaturas, propiedad_Not_NaN, columnsmust)
     report += apply_row(Asignaturas, propiedad_num_bloques_cero_bloques, ["NUM BLOQUES"])
     report += apply_row(Asignaturas, propiedad_num_sesiones_cero_sesiones, ["NUM SESIONES"])
+    report += apply_row(Asignaturas, propiedad_VacantesMax_NumerosPermitidos, ["VAC MAX"])
+    report += apply_row(Asignaturas, propiedad_VacantesMax_MaxCero, ["VAC MAX"])
     report += apply_row(Asignaturas, propiedad_req_horario_numerospermitidos, ["REQ HORARIO"])
     report += apply_row(Asignaturas, propiedad_req_horario_false, ["REQ HORARIO"])
     report += apply_row(Asignaturas, propiedad_req_sala_numerospermitidos, ["REQ SALA"])
@@ -179,9 +275,22 @@ def validacion_asignatura(Asignaturas, TSalas, Franjas, path="Reporte/", to_csv=
     report += apply_row(Asignaturas, propiedad_req_docente_numerospermitidos, ["REQ DOCENTE"])
     report += apply_row(Asignaturas, propiedad_req_docente_false, ["REQ DOCENTE"])
     report += apply_row(Asignaturas, propiedad_online_numerospermitidos, ["ONLINE"])
+    report += apply_row(Asignaturas, propiedad_online_InfoUno, ["ONLINE"])
+    report += apply_row(Asignaturas, propiedad_SesionesAlineadas_NumerosPermitidos, ["SESIONES ALINEADAS"])
+    report += apply_row(Asignaturas, propiedad_SesionesAlineadas_InfoUno, ["SESIONES ALINEADAS"])
     report += apply_row(Asignaturas, propiedad_usable_numerospermitidos, ["USABLE"])
     report += apply_row(Asignaturas, propiedad_usable_info_cero, ["USABLE"])
+
+
     #Opcionales
+    report += apply_row(Asignaturas[Asignaturas['VAC MIN'].notna()], propiedad_VacantesMin_NumerosPermitidos, ["VAC MIN"])
+    report += apply_row(Asignaturas[Asignaturas['VAC OPT'].notna()], propiedad_VacantesOpt_NumerosPermitidos, ["VAC OPT"])
+    report += apply_row(Asignaturas[Asignaturas['VAC OPT'].notna()], propiedad_VacantesOpt_MaxCero, ["VAC OPT"])
+    report += apply_row(Asignaturas[Asignaturas['VAC OPT'].notna()], propiedad_Vacantes_MaxOpt, ["VAC OPT", "VAC MAX"])
+    report += apply_row(Asignaturas[(Asignaturas['VAC OPT'].notna()) & (Asignaturas['VAC MIN'].notna())], propiedad_Vacantes_OptMin, ["VAC OPT", "VAC MIN"])
+    report += apply_row(Asignaturas[Asignaturas['VAC MIN'].notna()], propiedad_Vacantes_MaxMin, ["VAC MIN", "VAC MAX"])
+
+
     #Dependientes
 
     if isinstance(TSalas, pd.DataFrame):
