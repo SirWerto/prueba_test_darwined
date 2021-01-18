@@ -2,6 +2,7 @@
 * General
   Crear un repositorio de Implemental Systems
 * Test de Validación
+  Numbres unicos para las cosas y alias (solo afectan a lectura de usuario)
 ** Asignaturas
    Checkear duplicados por llave
    Test sobre el campo de tipo de asistencia
@@ -23,6 +24,12 @@
    Checkear not null
    
 ** Edificios
+   Checkear not null
+   
+** Tipos de salas
+   Checkear not null
+   
+** Salas
    Checkear not null
    
 * Test de cadena de llaves
