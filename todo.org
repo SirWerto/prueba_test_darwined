@@ -6,6 +6,7 @@
    Checkear duplicados por llave
    Test sobre el campo de tipo de asistencia
    Test de verificación horas bloque usando el catálogo de franjas
+   Test sobre los niveles, Error menor que 0 y Warning si 0
    
 ** Mallas
    warning de nivel 1 con requisitos
@@ -15,6 +16,14 @@
    Verifiicar que no hay franjas vacias de bloques
    
 ** Escuelas 
+   Checkear not null
    Preguntar por el campo estatus que valores hay disponibles
    
+** Sedes
+   Checkear not null
+   
+** Edificios
+   Checkear not null
+   
 * Test de cadena de llaves
+   
