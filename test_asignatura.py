@@ -1,4 +1,5 @@
 import pandas as pd
+from utilities_darwined import apply_row
 
 
 
@@ -237,14 +238,6 @@ def crear_clave(x):
     Clave = str(x["SEDE"])+str(x["ESCUELA"])+str(x["MODALIDAD"])+str(x["JORNADA"])+str(x["CARRERA"])+str(x["CURRICULO"])+str(x["ASIGNATURA"])+str(x["COMPONENTE"])
     return Clave
 
-def apply_row(df, func, columns, **kargs):
-    owncolumns = columns.copy()
-    owncolumns.append("ClaveReporte")
-    try:
-        tofix = df[owncolumns].apply(func, axis=1, **kargs).dropna().values.tolist()
-        return tofix
-    except:
-        return []
 
 ############################    
 ### Catalogue Validation ###

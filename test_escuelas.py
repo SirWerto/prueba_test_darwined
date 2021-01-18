@@ -1,9 +1,6 @@
 import pandas as pd
+from utilities_darwined import report_duplicated
 
-def report_duplicated(Escuelas):
-    ListOfDuplicated = Escuelas.loc[Escuelas["ClaveReporte"].duplicated(), "ClaveReporte"].values.tolist()
-    Reporte = [("escuelas", Clave, "Código", "error", "La clave está siendo usada en varias filas", "") for Clave in ListOfDuplicated]
-    return Reporte
 
 ############################    
 ### Catalogue Validation ###
@@ -22,7 +19,8 @@ def validacion_escuelas(Cat, path="Reporte/", to_csv=False):
 
     report = []
 
-    report += report_duplicated(Escuelas)
+    TuplaDup = ("escuelas", "Código", "error", "La clave está siendo usada en varias filas", "")
+    report += report_duplicated(Escuelas, TuplaDup)
 
 
     if len(report) != 0:
