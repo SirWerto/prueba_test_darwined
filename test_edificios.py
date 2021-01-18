@@ -23,7 +23,7 @@ def validacion_edificios(Cat, path="Reporte/", to_csv=False):
     Edificios["ClaveReporte"] = Edificios.apply(crear_clave, axis=1)
 
     report = []
-    TuplaDup = ("escuelas", "Código", "error", "La clave está siendo usada en varias filas", "")
+    TuplaDup = ("edificios", "Código", "error", "La clave está siendo usada en varias filas", "")
     report += report_duplicated(Edificios, TuplaDup)
 
     keycolumns = []

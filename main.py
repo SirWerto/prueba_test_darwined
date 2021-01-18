@@ -5,6 +5,8 @@ from test_asignatura import validacion_asignatura
 from test_escuelas import validacion_escuelas
 from test_sedes import validacion_sedes
 from test_edificios import validacion_edificios
+from test_tiposdesala import validacion_tiposdesala
+from test_salas import validacion_salas
 
 
 def try_to_read(key, Path):
@@ -33,6 +35,8 @@ def main(catalogos, path="Reporte/", to_csv=False):
     reportlist += validacion_escuelas(Cat, path=path, to_csv=to_csv)
     reportlist += validacion_sedes(Cat, path=path, to_csv=to_csv)
     reportlist += validacion_edificios(Cat, path=path, to_csv=to_csv)
+    reportlist += validacion_tiposdesala(Cat, path=path, to_csv=to_csv)
+    reportlist += validacion_salas(Cat, path=path, to_csv=to_csv)
     reportlist += validacion_asignatura(Cat, path=path, to_csv=to_csv)
 
     
