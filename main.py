@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import time
 from test_asignatura import validacion_asignatura
+from test_escuelas import validacion_escuelas
 
 
 def try_to_read(key, Path):
@@ -27,6 +28,7 @@ def main(catalogos, path="Reporte/", to_csv=False):
     Cat = {key:try_to_read(key, value) for key, value in catalogos.items()}
 
     print("================ EVALUACIÓN ================")
+    reportlist += validacion_escuelas(Cat["escuelas"], path=path, to_csv=to_csv)
     reportlist += validacion_asignatura(Cat["asignatura"], Cat["tsalas"], Cat["franjas"], path=path, to_csv=to_csv)
 
     
