@@ -1,0 +1,20 @@
+
+* General
+  Crear un repositorio de Implemental Systems
+* Test de Validación
+** Asignaturas
+   Checkear duplicados por llave
+   Test sobre el campo de tipo de asistencia
+   Test de verificación horas bloque usando el catálogo de franjas
+   
+** Mallas
+   warning de nivel 1 con requisitos
+   warning de nivel 0
+   
+** Franjas
+   Verifiicar que no hay franjas vacias de bloques
+   
+** Escuelas 
+   Preguntar por el campo estatus que valores hay disponibles
+   
+* Test de cadena de llaves
