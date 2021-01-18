@@ -252,6 +252,8 @@ def apply_row(df, func, columns, **kargs):
 
 
 def validacion_asignatura(Asignaturas, TSalas, Franjas, path="Reporte/", to_csv=False):
+    if Asignaturas is None:
+        return []
 
     Asignaturas["ClaveReporte"] = Asignaturas.apply(crear_clave, axis=1, result_type='reduce')
     allcolumns = Asignaturas.columns.tolist()[:-1].copy()
