@@ -10,7 +10,10 @@ def report_duplicated(Escuelas):
 ############################
 
 
-def validacion_escuelas(Escuelas, path="Reporte/", to_csv=False):
+def validacion_escuelas(Cat, path="Reporte/", to_csv=False):
+
+    Escuelas = Cat["escuelas"]
+
     if Escuelas is None:
         return []
 

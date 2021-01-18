@@ -251,7 +251,12 @@ def apply_row(df, func, columns, **kargs):
 ############################
 
 
-def validacion_asignatura(Asignaturas, TSalas, Franjas, path="Reporte/", to_csv=False):
+def validacion_asignatura(Cat, path="Reporte/", to_csv=False):
+
+    Asignaturas = Cat["asignatura"]
+    TSalas = Cat["tsalas"]
+    Franjas = Cat["franjas"]
+    
     if Asignaturas is None:
         return []
 
