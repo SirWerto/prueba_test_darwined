@@ -1,5 +1,5 @@
 import pandas as pd
-from utilities_darwined import report_duplicated, test_de_llaves, apply_row
+from utilities_darwined import report_duplicated, test_de_llaves, apply_row, to_report
 
 ########################   
 ### Check Properties ###
@@ -92,36 +92,22 @@ def validacion_salas(Cat, path="Reporte/", to_csv=False):
         keylist.append(ClavesSede)
 
     if isinstance(Edificios, pd.DataFrame):
-        ClavesSede = Edificios["CODIGO"].values.tolist()
+        ClavesEdificios = Edificios["CODIGO"].values.tolist()
         keycolumns.append("EDIFICIO")
-        keylist.append(ClavesSede)
+        keylist.append(ClavesEdificios)
 
     if isinstance(TSalas, pd.DataFrame):
-        ClavesSede = TSalas["CODIGO"].values.tolist()
+        ClavesTSalas = TSalas["CODIGO"].values.tolist()
         keycolumns.append("TIPO")
-        keylist.append(ClavesSede)
+        keylist.append(ClavesTSalas)
 
     report += test_de_llaves(Salas, "salas", keycolumns, keylist)
 
     
 
+    #SAVE AND REPORT
+    to_report(report, Salas, "Salas", path, to_csv)
+    return report
 
 
-    if len(report) != 0:
-        print("Se han encontrado " + str(len(report)) + " alertas en el catalogo de salas")
-        clavesconerror = [(clave, tipo) for fichero, clave, column, tipo, msg1, msg2 in report]
-        ce = pd.DataFrame(clavesconerror, columns=["ClaveReporte", "Error"])
-        Salas = Salas.merge(ce, how="left", on="ClaveReporte")
-        
-        cols = Salas.columns.values.tolist()
-        NewCols = ["ClaveReporte", "Error"] + cols[:-2]
-
-        if to_csv:
-            Salas[NewCols].to_csv(path+"RSalas.csv", index=False)
-            return report
-        else:
-            Salas[NewCols].to_excel(path+"RSalas.xlsx", index=False)
-            return report
-    else:
-        return []
     

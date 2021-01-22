@@ -1,5 +1,5 @@
 import pandas as pd
-from utilities_darwined import apply_row
+from utilities_darwined import apply_row, to_report
 
 
 
@@ -221,6 +221,14 @@ def propiedad_Vacantes_OptMin(row):
         return None
 
 
+def propiedad_Tipo_Vacio(row):
+    if pd.isna(row["TIPO"]):
+        Tupla = ("asignaturas", str(row["ClaveReporte"]), "TIPO", "recomendacion", "Se recomienda definir la semestralidad de la asignatura en este campo para poder emplearlo luego en el editor", "1er semestre")
+        return Tupla
+    else:
+        return None
+
+
 
 
 
@@ -264,6 +272,7 @@ def validacion_asignatura(Cat, path="Reporte/", to_csv=False):
 
     #Obligatorias
     report += apply_row(Asignaturas, propiedad_Not_NaN, columnsmust)
+    report += apply_row(Asignaturas, propiedad_Tipo_Vacio, ["TIPO"])
     report += apply_row(Asignaturas, propiedad_num_bloques_cero_bloques, ["NUM BLOQUES"])
     report += apply_row(Asignaturas, propiedad_num_sesiones_cero_sesiones, ["NUM SESIONES"])
     report += apply_row(Asignaturas, propiedad_VacantesMax_NumerosPermitidos, ["VAC MAX"])
@@ -310,22 +319,7 @@ def validacion_asignatura(Cat, path="Reporte/", to_csv=False):
 
 
     #SAVE AND REPORT
-    if len(report) != 0:
-        print("Se han encontrado " + str(len(report)) + " alertas en el catalogo de asignaturas")
-        clavesconerror = [(clave, tipo) for fichero, clave, column, tipo, msg1, msg2 in report]
-        ce = pd.DataFrame(clavesconerror, columns=["ClaveReporte", "Error"])
-        Asignaturas = Asignaturas.merge(ce, how="left", on="ClaveReporte")
-        
-        cols = Asignaturas.columns.values.tolist()
-        NewCols = ["ClaveReporte", "Error"] + cols[:-2]
-        
-        if to_csv:
-            Asignaturas[NewCols].to_csv(path+"RAsignaturas.csv", index=False)
-            return report
-        else:
-            Asignaturas[NewCols].to_excel(path+"RAsignaturas.xlsx", index=False)
-            return report
-    else:
-        return []
+    to_report(report, Asignaturas, "asignaturas", path, to_csv)
+    return report
 
     

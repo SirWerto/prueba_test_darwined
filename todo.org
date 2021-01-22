@@ -1,12 +1,18 @@
 
 * General
   Crear un repositorio de Implemental Systems
+  
+  Plantarse lo de hacer clase de catalogo y propiedad para mejorar el escalado
+  para mejorar el rendimiento aplicar solo un apply, haciendo que se estudien todas las propiedades
+  migrar a la implementación con clases
 * Test de ValidaciÃ³n
+  Checkear campos opcionales y que las columnas obligatorias no esten vacias
   Numbres unicos para las cosas y alias (solo afectan a lectura de usuario)
+  Crear alerta de tipo recomendación para buenas prácticas
 ** Asignaturas
    Checkear duplicados por llave
    Test sobre el campo de tipo de asistencia
-   Test de verificaciÃ³n horas bloque usando el catÃ¡logo de franjas
+   Test de verificaciÃ³n horas-bloque usando el catÃ¡logo de franjas
    Test sobre los niveles, Error menor que 0 y Warning si 0
    
 ** Mallas
@@ -32,5 +38,18 @@
 ** Salas
    Checkear not null
    
-* Test de cadena de llaves
+** modalidades
+   Checkear not null
+
+** jornada
+   Checkear not null
+
+** carrera
+   Checkear not null
+
+** curriculo
+   verificar relación periodo-año
+   Checkear not null
+   
+   
    

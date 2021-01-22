@@ -1,5 +1,5 @@
 import pandas as pd
-from utilities_darwined import report_duplicated, test_de_llaves
+from utilities_darwined import report_duplicated, test_de_llaves, to_report
 
 
 def crear_clave(x):
@@ -39,21 +39,7 @@ def validacion_edificios(Cat, path="Reporte/", to_csv=False):
 
 
 
-    if len(report) != 0:
-        print("Se han encontrado " + str(len(report)) + " alertas en el catalogo de edificios")
-        clavesconerror = [(clave, tipo) for fichero, clave, column, tipo, msg1, msg2 in report]
-        ce = pd.DataFrame(clavesconerror, columns=["ClaveReporte", "Error"])
-        Edificios = Edificios.merge(ce, how="left", on="ClaveReporte")
-        
-        cols = Edificios.columns.values.tolist()
-        NewCols = ["ClaveReporte", "Error"] + cols[:-2]
-
-        if to_csv:
-            Edificios[NewCols].to_csv(path+"REdificios.csv", index=False)
-            return report
-        else:
-            Edificios[NewCols].to_excel(path+"REdificios.xlsx", index=False)
-            return report
-    else:
-        return []
+    #SAVE AND REPORT
+    to_report(report, Edificios, "edificios", path, to_csv)
+    return report
     
